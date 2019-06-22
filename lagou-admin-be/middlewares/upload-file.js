@@ -18,7 +18,6 @@ class FileUpload {
 
     uploadFile(req, res, next) {
         let filename = ''
-
         // storeage 定义文件存储信息
         let storage = multer.diskStorage({
             // 目标文件夹位置
@@ -51,6 +50,10 @@ class FileUpload {
         }).single('companyLogo')
 
         upload(req, res, (err) => {
+            if(req.body.companyLogo === ''){
+                next()
+                return false
+            }
             if (err) {
                 res.render('fail', {
                     data: JSON.stringify(err.message)

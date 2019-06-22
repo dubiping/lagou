@@ -8,6 +8,7 @@ const router = new SmeRouter('router-view')
 router.route('/index',IndexController.render)
 router.route('/position',PositionController.render)
 router.route('/position_add',PositionController.renderAddTpl)
+router.route('/position_update/:id',PositionController.updateData)
 
 router.route('*',(req,res,next)=>{
     res.redirect('/index')

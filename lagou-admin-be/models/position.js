@@ -21,8 +21,14 @@ class PositionModel{
         return pos.save()
     }
     // 通过用户名寻找数据
-    findAll(){
-        return this.dbModel.find({})
+    find(conditions){
+        return this.dbModel.find(conditions)
+    }
+    delete(id){
+        return this.dbModel.findByIdAndRemove(id)
+    }
+    update(data){
+        return this.dbModel.findByIdAndUpdate(data._id,data)
     }
 }
 module.exports = new PositionModel()

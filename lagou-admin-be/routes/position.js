@@ -7,7 +7,10 @@ const fileUpload = require('../middlewares/upload-file')
 /* GET users listing. */
 router.route('/')
     .all(isContinue)
-    .get(PositionController.findAll)
+    .get(PositionController.find)
     .post(fileUpload.uploadFile,PositionController.save)
+    .delete(PositionController.delete)
+
+router.post('/update',fileUpload.uploadFile,PositionController.update)
 
 module.exports = router;
