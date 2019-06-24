@@ -12,5 +12,6 @@ router.route('/')
     .delete(PositionController.delete)
 
 router.post('/update',fileUpload.uploadFile,PositionController.update)
+router.get('/find',PositionController.findMany)
 
 module.exports = router;

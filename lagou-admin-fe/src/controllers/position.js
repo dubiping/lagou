@@ -2,41 +2,64 @@ import PositionTpl from '../views/position-main.hbs'
 import checkSignin from '../utils/oAuto'
 import AddTpl from '../views/position-add.hbs'
 import ListTpl from '../views/position-list.html'
+import PageTpl from '../views/position-page.html'
 import updateTpl from '../views/position-update.hbs'
 
+let defaultPageSize = 5
+let defaultPage = 1
 async function render(req, res, next){
     let result = await checkSignin()
     
     if(result.data.isSignin){
         res.render(PositionTpl({}))
-        renderList()
-        bindPositionListEvent(res)
+        renderList(req)
+        bindPositionListEvent(req,res)
     }
     else{
         res.go('/index')
     }
 }
 // 渲染职位列表
-async function renderList(){
-    let info = await getPosData()
-        
-    let template = Handlebars.compile(ListTpl)
-    let renderedListTpl = template({
-        data: info.data,
-        hasResult: info.data.length > 0
+async function renderList(req){
+    let page = req.query && req.query.page || defaultPage
+    let pagesize = req.query && req.query.pagesize || defaultPageSize
+    let keywords = req.query && req.query.keywords || ''
+
+    let info = await getPosData(page,pagesize,keywords)
+
+    let renderedListTpl = template.render(ListTpl,{
+        data: info.data.result,
+        hasResult: info.data.result.length > 0,
+        page:~~page,
+        pagesize
     })
     $('.box-body').html(renderedListTpl)
+
+    let renderedPageTpl = template.render(PageTpl,{
+        pageCnt: Math.ceil(info.data.total / ~~pagesize),
+        page:~~page,
+        total: info.data.total,
+        pagesize,
+        keywords,
+        url: location.hash.split('?')[0]
+    })
+    $('.pagination').html(renderedPageTpl)
 }
 
-function getPosData(){
+function getPosData(page,pagesize,keywords){
     return $.ajax({
-        url: '/api/position',
+        url: '/api/position/find',
         headers: {
             'X-Access-Token': localStorage.getItem('token')
         },
+        data: {
+            page,
+            pagesize,
+            keywords
+        },
         success: function(result){
             return result
-          }
+        }
     })
 }
 
@@ -45,7 +68,7 @@ function renderAddTpl(req,res,next){
     bindPositionAddEvent(res)
 }
 
-function bindPositionListEvent(res){
+function bindPositionListEvent(req,res){
     $('#addbtn').on('click',(e)=>{
         res.go('/position_add')
     })
@@ -62,7 +85,7 @@ function bindPositionListEvent(res){
             },
             success(result){
                 if(result.ret == true){
-                    renderList()
+                    renderList(req)
                 }
                 else{
                     alert(result.data)
@@ -72,6 +95,9 @@ function bindPositionListEvent(res){
     })
     $('.box-body').on('click','.btn-update',function(){
         res.go('/position_update/' + $(this).closest('tr').data('id'))
+    })
+    $('#possearch').on('click',(e)=>{
+        res.go(`/position?page=1&pagesize=${defaultPageSize}&keywords=${$('#keywords').val()}`)
     })
 }
 function bindPositionAddEvent(res){
@@ -86,7 +112,7 @@ function bindPositionAddEvent(res){
           },
           success(result) {
             if(result.ret == true){
-                res.back()
+                res.go(`/position?page=1&pagesize=${defaultPageSize}&keywords=`)
             }
             else{
                 alert(result.data)

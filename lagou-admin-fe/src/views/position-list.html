@@ -9,16 +9,16 @@
       <th>岗位薪资</th>
       <th style="width: 180px">操作</th>
     </tr>
-    {{#if hasResult}}
-    {{#each data}}
-    <tr data-id = {{_id}}> 
-      <td>{{@index}}</td>
-      <td><img width="50" height="50" src="http://localhost:3000/upload/{{companyLogo}}" alt=""></td>
-      <td>{{companyName}}</td>
-      <td>{{positionName}}</td>
-      <td>{{city}}</td>
-      <td>{{createTime}}</td>
-      <td>{{salary}}</td>
+    {{if hasResult}}
+    {{each data}}
+    <tr data-id = {{$value._id}}> 
+      <td>{{$index + (page-1) * pagesize + 1}}</td>
+      <td><img width="50" height="50" src="http://localhost:3000/upload/{{$value.companyLogo}}" alt=""></td>
+      <td>{{$value.companyName}}</td>
+      <td>{{$value.positionName}}</td>
+      <td>{{$value.city}}</td>
+      <td>{{$value.createTime}}</td>
+      <td>{{$value.salary}}</td>
       <td>
         <button class="btn btn-sm btn-primary btn-update"><span class="fa fa-edit"></span>
           修改</button>

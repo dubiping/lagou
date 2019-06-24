@@ -7,7 +7,27 @@ class PositionController{
     async find(req, res, next) {
         res.set('Content-Type', 'application/json; charset=utf-8')
         let result = await PositionModel.find(req.query)
-        res.render('succ', {data: JSON.stringify(result)})
+        res.render('succ', {
+            data: JSON.stringify(result)
+        })
+    }
+    async findMany(req,res,next){
+        res.set('Content-Type', 'application/json; charset=utf-8')
+        let { page = 1, pagesize = 5, keywords = '' } = req.query
+        let result = await PositionModel.findMany({
+            page: ~~page, 
+            pagesize: ~~pagesize,
+            keywords
+        })
+
+        if (result) {
+            res.render('succ', {
+                data: JSON.stringify({
+                result,
+                total: (await PositionModel.find({},keywords)).length
+                })
+            })
+        }
     }
     async save(req,res,next){
         res.set('Content-Type', 'application/json; charset=utf-8')

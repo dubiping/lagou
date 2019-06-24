@@ -1,0 +1,6 @@
+
+<li><a href="{{url}}?page={{page>1 ? page-1 : 1}}&pagesize={{pagesize}}&keywords={{keywords}}">&laquo;</a></li>
+<% for(var i = 1; i <= pageCnt; i++){ %>
+<li class= <%= page == i ? 'active' : '' %>><a href="{{url}}?page=<%= i %>&pagesize={{pagesize}}&keywords={{keywords}}"><%= i %></a></li>
+<% } %>
+<li><a href="{{url}}?page={{page < pageCnt ? (page+1) : pageCnt}}&pagesize={{pagesize}}&keywords={{keywords}}">&raquo;</a></li>

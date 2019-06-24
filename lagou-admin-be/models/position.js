@@ -21,8 +21,15 @@ class PositionModel{
         return pos.save()
     }
     // 通过用户名寻找数据
-    find(conditions){
+    find(conditions,keywords){
+        let regExp = new RegExp(keywords, "i")
         return this.dbModel.find(conditions)
+            .or([{ companyName: regExp }, { positionName: regExp }])
+    }
+    findMany({page,pagesize,keywords}){
+        let regExp = new RegExp(keywords, "i")
+        return this.dbModel.find({}).skip((page-1) * pagesize).limit(pagesize).sort({_id: -1})
+            .or([{ companyName: regExp }, { positionName: regExp }])
     }
     delete(id){
         return this.dbModel.findByIdAndRemove(id)
